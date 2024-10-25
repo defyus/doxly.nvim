@@ -96,8 +96,8 @@ Doxly.nvim comes with the following defaults:
 
 Default mappings (can be disabled or changed in setup):
 
-- `<leader>en` - Description of what this mapping does
-- `<leader>dc` - Description of what this mapping does
+- `<leader>en` - Encrypt highlighted text.
+- `<leader>dc` - Decrypt highlighted text.
 
 ## Security Notes
 
