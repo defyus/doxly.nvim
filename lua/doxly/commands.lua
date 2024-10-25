@@ -50,6 +50,10 @@ function M.setup()
 
         local encrypted_value = utils.encrypt(message, password)
 
+        if encrypted_value == nil then
+            vim.notify("Unable to encrypt value", vim.log.levels.WARN)
+        end
+
         vim.api.nvim_buf_set_lines(0, start_line - 1, end_line, false, encrypted_value)
     end, {
         range = true
