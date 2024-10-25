@@ -238,6 +238,7 @@ end
 ---@return string[]|nil
 function M.decrypt(input, password)
     -- Create temporary file
+    vim.notify(input, vim.log.levels.ERROR)
     local temp_file = os.tmpname()
     local f = io.open(temp_file, "w")
 
