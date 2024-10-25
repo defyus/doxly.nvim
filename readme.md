@@ -70,9 +70,6 @@ Doxly.nvim comes with the following defaults:
     },
 }
 ```
-## 🚀 Usage
-
-Explain how to use your plugin here.
 
 ## 🔍 Commands
 
@@ -153,3 +150,6 @@ MIT
 - Base64 single-line output
 - Visual mode support
 - Secure password handling
+
+
+LS0tLS1CRUdJTiBQR1AgTUVTU0FHRS0tLS0tCgpqQTBFQ1FNSXMxNkthRVRnbmgvLzBqOEJ0ekYvWC9LZVhyenBRdG9nMHVRc3FnUDZPb0NtazFUUm1zZGo2a0c4CjNHODJieG9IbStNNXRYTVNCa3ZWVUpsQmNlSmlRUTUwVXhuQjFZV2xGRVk9Cj1zK1BKCi0tLS0tRU5EIFBHUCBNRVNTQUdFLS0tLS0K
