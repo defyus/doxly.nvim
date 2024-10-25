@@ -76,9 +76,12 @@ function M.setup()
 
         local encrypted_value = utils.encrypt(message, password)
 
-        if encrypted_value == nil or encrypted_value[1] == nil then
+
+
+        if encrypted_value == nil then
             vim.notify("Unable to encrypt value", vim.log.levels.WARN)
         end
+
 
         if #encrypted_value > 0 then
             local encrypted_text = encrypted_value[1] -- base64 is single line
@@ -110,6 +113,15 @@ function M.setup()
             -- Position cursor at the start of replaced text
             vim.api.nvim_win_set_cursor(0, { start_line, start_col - 1 })
         end
+
+
+        if #encrypted_value > 0 then
+            vim.api.nvim_buf_set_lines(0, start_line - 1, end_line, false, encrypted_value)
+            -- Position cursor at the start of replaced text
+            vim.api.nvim_win_set_cursor(0, { start_line, 0 })
+        end
+
+        -- vim.api.nvim_buf_set_lines(0, start_line - 1, end_line, false, encrypted_value)
     end, {
         range = true
     })
