@@ -17,45 +17,18 @@ function M.setup()
         -- Get current buffer content
         local encrypted = table.concat(lines, "\n")
 
-        -- Create temporary file
-        local temp_file = os.tmpname()
-        local f = io.open(temp_file, "w")
-        f:write(encrypted)
-        f:close()
+        local decrypted_value = utils.decrypt(encrypted, password)
 
-        -- Decode base64 and decrypt
-        utils.run_async("bash", {
-            args = {
-                "-c",
-                string.format(
-                    'cat "%s" | base64 -d | gpg --decrypt --batch --yes --passphrase "%s"',
-                    temp_file,
-                    password
-                )
-            },
-            on_success = function(stdout_lines)
-                -- Create new buffer with decrypted content
-                local buf = vim.api.nvim_create_buf(false, true)
-                vim.api.nvim_buf_set_lines(buf, 0, -1, false, stdout_lines)
+        if decrypted_value == nil then
+            vim.notify("Unable to decrypt value", vim.log.levels.WARN)
+        end
 
-                vim.cmd("vsplit")
-                vim.api.nvim_win_set_buf(0, buf)
+        -- Create new buffer with decrypted content
+        local buf = vim.api.nvim_create_buf(false, true)
+        vim.api.nvim_buf_set_lines(buf, 0, -1, false, decrypted_value)
 
-                -- Clean up
-                os.remove(temp_file)
-                password = nil
-                collectgarbage()
-
-                vim.notify("Message decrypted successfully!")
-            end,
-            on_error = function(error_lines)
-                vim.notify("Decryption failed: " .. table.concat(error_lines, "\n"), vim.log.levels.ERROR)
-                -- Clean up
-                os.remove(temp_file)
-                password = nil
-                collectgarbage()
-            end
-        })
+        vim.cmd("vsplit")
+        vim.api.nvim_win_set_buf(0, buf)
     end, {
         range = true
     })
@@ -75,43 +48,9 @@ function M.setup()
             return
         end
 
-        -- Create temporary file for the message
-        local temp_file = os.tmpname()
-        local f = io.open(temp_file, "w")
-        f:write(message)
-        f:close()
+        local encrypted_value = utils.encrypt(message, password)
 
-        -- Encrypt and encode
-        utils.run_async("bash", {
-            args = {
-                "-c",
-                string.format(
-                    'cat "%s" | gpg --symmetric --armor --batch --yes --passphrase "%s" | base64 -w 0',
-                    temp_file,
-                    password
-                )
-            },
-            on_success = function(stdout_lines)
-                -- Replace the selected text with encrypted content
-                vim.api.nvim_buf_set_lines(0, start_line - 1, end_line, false, stdout_lines)
-
-                -- Clean up
-                os.remove(temp_file)
-                password = nil
-                message = nil
-                collectgarbage()
-
-                vim.notify("Selection encrypted and encoded successfully!")
-            end,
-            on_error = function(error_lines)
-                vim.notify("Operation failed: " .. table.concat(error_lines, "\n"), vim.log.levels.ERROR)
-                -- Clean up
-                os.remove(temp_file)
-                password = nil
-                message = nil
-                collectgarbage()
-            end
-        })
+        vim.api.nvim_buf_set_lines(0, start_line - 1, end_line, false, encrypted_value)
     end, {
         range = true
     })

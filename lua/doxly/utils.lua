@@ -189,4 +189,94 @@ function M.get_password(prompt)
     return password
 end
 
+---Encrupt Function
+---@param input string|nil
+---@param password string|nil
+---@return string[]|nil
+function M.encrypt(input, password)
+    local temp_file = os.tmpname()
+    local f = io.open(temp_file, "w")
+
+    if f == nil then
+        vim.notify("temp file creation failed ", vim.log.levels.ERROR)
+    end
+
+    if input == '' or password == '' then
+        vim.notify("input and password is required", vim.log.levels.ERROR)
+    end
+
+    f:write(input)
+    f:close()
+
+    local stdout = M.run_sync("bash", {
+        args = {
+            "-c",
+            string.format(
+                'cat "%s" | gpg --symmetric --armor --batch --yes --passphrase "%s" | base64 -w 0',
+                temp_file,
+                password
+            )
+        },
+        silent = true
+    })
+
+    os.remove(temp_file)
+
+    password = nil
+    input = nil
+
+    collectgarbage()
+
+    vim.notify("Selection encrypted and encoded successfully!")
+
+    return stdout
+end
+
+---Decrypt Function
+---@param input string|nil
+---@param password string|nil
+---@return string[]|nil
+function M.decrypt(input, password)
+    -- Create temporary file
+    local temp_file = os.tmpname()
+    local f = io.open(temp_file, "w")
+
+    if f == nil then
+        vim.notify("Temp file creation failed ", vim.log.levels.ERROR)
+    end
+
+    if input == '' or password == '' then
+        vim.notify("input and password is required", vim.log.levels.ERROR)
+    end
+
+    f:write(input)
+    f:close()
+
+    function CB(value)
+        return value
+    end
+
+    local stdout = M.run_sync("bash", {
+        args = {
+            "-c",
+            string.format(
+                'cat "%s" | base64 -d | gpg --decrypt --batch --yes --passphrase "%s" 2>/dev/null',
+                temp_file,
+                password
+            )
+        },
+        silent = true
+    })
+
+    os.remove(temp_file)
+
+    password = nil
+
+    collectgarbage()
+
+    vim.notify("Message decrypted successfully!")
+
+    return stdout
+end
+
 return M
