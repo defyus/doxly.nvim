@@ -2,7 +2,7 @@
 
 Doxly.nvim provides GPG encryption with Base64 encoding. Securely encrypt your text with a password and get a single-line Base64 output that's easy to share and use.
 
-![ezgif-2-8c8270f909](https://github.com/user-attachments/assets/a3af3bbd-96a8-42cb-b841-52ac2c6d13a3)
+![demonstration](https://github.com/user-attachments/assets/0dc38e0b-e792-4929-82f0-2f2493e64f24)
 
 ## ⚡️ Prerequisites Requirements
 
